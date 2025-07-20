@@ -1,0 +1,31 @@
+body {
+    font-family: sans-serif;
+    background: #e1dddd;
+    padding: 2rem;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card {
+    background: #bcbcbc;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    width: 250px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.card p {
+    margin-top: 0.5rem;
+}

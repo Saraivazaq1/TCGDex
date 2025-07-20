@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Sua equipe</h1>
+    <% if (pokemons.length===0) { %>
+        <p>Nenhum pokémon salvo ainda.</p>
+        <% } else { %>
+            <div class="container">
+                <% pokemons.forEach(pokemon=> { %>
+                    <div class="card">
+                        <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>">
+                        <p><strong>
+                                <%= pokemon.name %>
+                            </strong></p>
+                        <% if (pokemon.hp) { %>
+                            <p>HP: <%= pokemon.hp %>
+                            </p>
+                            <% } %>
+                    </div>
+                    <% }); %>
+            </div>
+            <% } %>
+</body>
+
+</html>
