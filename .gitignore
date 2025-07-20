@@ -27,3 +27,6 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo 
+
+#Env
+src/const.ts
