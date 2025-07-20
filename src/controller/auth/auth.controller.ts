@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Res, Render } from '@nestjs/common';
 import { AuthService } from '../../service/auth.service';
 import { Response } from 'express';
 
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,8 +26,25 @@ export class AuthController {
 
     return res.redirect('login');
   }
+
   @Get('login')
   getLoginPage(@Res() res: Response){
     res.render('login')
+  }
+
+  @Post('login')
+  async login(
+    @Body() body: {username: string; password: string},
+    @Res() res: Response,
+  ){
+    const { username, password } = body;
+    const { error } = await this.authService.login(username, password);
+
+    if (error) {
+        return res.render('login', {error: error.message});
+    }
+
+
+    return res.redirect('/card/equipe/')
   }
 }

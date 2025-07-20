@@ -6,6 +6,7 @@ export class PokemonService {
 
     private url = 'https://api.tcgdex.net/v2/en/cards'
     private pokemons: CardBrief[] = []
+    
 
     async getPokemonJson(name: string) {
         let response = await fetch(`${this.url}?=${name}`)

@@ -19,5 +19,13 @@ export class AuthService {
 
     return { data, error };
   }
+  async login(username: string, password: string): Promise<{ error: any, data :any }> {
+    const { data, error } = await supabase
+    .from("Jogador")
+    .select('*')
+    .eq('usuario', username)
+    .eq('senha', password)
+    return {data, error}
+  }
 }
 
