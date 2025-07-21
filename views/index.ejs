@@ -10,30 +10,57 @@
 
 <body>
     <h1>Sua equipe</h1>
-    <button onclick="window.href = 'cards/equipe'" >Gerar Equipe</button>
-    <% if (pokemons.length===0) { %>
+    <button onclick="window.location.href = '/card/equipe'">Gerar Equipe</button>
+
+    <% if (pokemons.length === 0) { %>
         <p>Nenhum pokémon salvo ainda.</p>
-        <% } else { %>
-            <div class="container">
-                <% pokemons.forEach(pokemon=> { %>
-                    <div class="card">
-                        <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>">
-                        <p><strong>
-                                <%= pokemon.name %>
-                            </strong></p>
-                        <% if (pokemon.hp) { %>
-                            <p>HP: <%= pokemon.hp %>
-                            </p>
-                            <% } %>
-                    </div>
-                    <% }); %>
-            </div>
-            <% } %>
-</body>
+    <% } else { %>
+        <div class="container">
+            <% pokemons.forEach(pokemon => { %>
+                <div class="card">
+                    <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>">
+                    <p><strong><%= pokemon.name %></strong></p>
+                    <% if (pokemon.hp) { %>
+                        <p>HP: <%= pokemon.hp %></p>
+                    <% } %>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+
+    <div class="form-container">
+        <div class="form-section">
+            <h2>Criar Partida</h2>
+            <form action="/partidas/criar" method="POST">
+                <div class="form-group">
+                    <label for="nomePartida">Nome da Partida:</label>
+                    <input type="text" id="nomePartida" name="nomePartida" required>
+                </div>
+                <button type="submit">Criar</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h2>Entrar em Partida</h2>
+            <form action="" method="POST">
+                <div class="form-group">
+                    <label >Escolha uma Partida:</label>
+                    <select id="" name="" required>
+                      
+                            <option value="">MI BOMBOCLAT⚡</option>
+
+                    </select>
+                </div>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const logged = localStorage.getItem('user');
         if (!logged) {
-          window.location.href = '/auth/register';
+            window.location.href = '/auth/register';
         }
     </script>
+</body>
 </html>

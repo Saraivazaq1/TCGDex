@@ -18,7 +18,7 @@ export class PokemonService {
         this.pokemons = [];
         for(let i = 0; i<3; i++){
             const pokemonAtual = await (await fetch(this.url + '/'+ json[Math.floor(Math.random() * json.length)].id)).json();
-            console.log(pokemonAtual);
+    
             const cardBrief: CardBrief = {
                 id: pokemonAtual.id,
                 name: pokemonAtual.name,
