@@ -32,19 +32,19 @@ export class AuthController {
     res.render('login')
   }
 
-  @Post('login')
-  async login(
-    @Body() body: {username: string; password: string},
-    @Res() res: Response,
-  ){
-    const { username, password } = body;
-    const { error } = await this.authService.login(username, password);
+@Post('login')
+async login(
+  @Body() body: { username: string; password: string },
+  @Res() res: Response
+) {
+  const { username, password } = body;
+  const { error, data } = await this.authService.login(username, password);
 
-    if (error) {
-        return res.render('login', {error: error.message});
-    }
-
-
-    return res.redirect('/card/equipe/')
+  if (error || !data || data.length === 0) {
+    return res.status(401).json({ success: false, error: 'Credenciais inválidas' });
   }
+
+  return res.status(200).json({ success: true, user: data[0] }); 
+}
+
 }

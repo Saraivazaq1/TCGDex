@@ -8,22 +8,32 @@ export class PokemonService {
     private pokemons: CardBrief[] = []
     
 
-    async getPokemonJson(name: string) {
-        let response = await fetch(`${this.url}?=${name}`)
+    async getPokemonJson() {
+        let response = await fetch(this.url + '?category=Pokemon');
         let json = await response.json()
-        json = json.filter((val: { image?: string, name: string }) => {
-            return val.image !== undefined && val.hasOwnProperty("image") && val.name.toLowerCase().includes(name.toLowerCase())
+        json = json.filter((val: { image?: string }) => {
+            return val.image !== undefined && val.hasOwnProperty("image")
         })
 
-        let randomIndex = Math.floor(Math.random() * json.length)
-        let pokemon = json[randomIndex]
-
-        let pokemonInfoResponse = await fetch(`${this.url}/${pokemon.id}`)
-        let pokemonInfoJson = await pokemonInfoResponse.json()
-
-        return pokemonInfoJson
+        this.pokemons = [];
+        for(let i = 0; i<3; i++){
+            const pokemonAtual = await (await fetch(this.url + '/'+ json[Math.floor(Math.random() * json.length)].id)).json();
+            console.log(pokemonAtual);
+            const cardBrief: CardBrief = {
+                id: pokemonAtual.id,
+                name: pokemonAtual.name,
+                image: `${pokemonAtual.image}/high.jpg`,
+                hp: pokemonAtual.hp,
+                types: pokemonAtual.types
+                    
+            }
+            this.pokemons.push(cardBrief);
+        }
+    
+        return this.pokemons
     }
 
+/*
     async addPokemon(name: string) {
         let pokemon = await this.getPokemonJson(name)
 
@@ -39,11 +49,13 @@ export class PokemonService {
         return { message: 'Pokemon adicionado!', total: this.pokemons.length }
 
     }
+        */
 
     getPokemons() {
         return this.pokemons
     }
 
+    /*
     deletePokemon(name: string) {
         const index = this.pokemons.findIndex((card) => card.name?.toLowerCase().includes(name.toLowerCase()))
 
@@ -57,6 +69,7 @@ export class PokemonService {
             cartaRemovida: removed
         }
     }
-
+*/
+  
 
 } 

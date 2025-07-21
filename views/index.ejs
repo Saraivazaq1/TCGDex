@@ -10,6 +10,7 @@
 
 <body>
     <h1>Sua equipe</h1>
+    <button onclick="window.href = 'cards/equipe'" >Gerar Equipe</button>
     <% if (pokemons.length===0) { %>
         <p>Nenhum pokémon salvo ainda.</p>
         <% } else { %>
@@ -29,5 +30,10 @@
             </div>
             <% } %>
 </body>
-
+    <script>
+        const logged = localStorage.getItem('user');
+        if (!logged) {
+          window.location.href = '/auth/register';
+        }
+    </script>
 </html>
