@@ -12,55 +12,157 @@
     <h1>Sua equipe</h1>
     <button onclick="window.location.href = '/card/equipe'">Gerar Equipe</button>
 
-    <% if (pokemons.length === 0) { %>
+    <% if (pokemons.length===0) { %>
         <p>Nenhum pokémon salvo ainda.</p>
-    <% } else { %>
-        <div class="container">
-            <% pokemons.forEach(pokemon => { %>
-                <div class="card">
-                    <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>">
-                    <p><strong><%= pokemon.name %></strong></p>
-                    <% if (pokemon.hp) { %>
-                        <p>HP: <%= pokemon.hp %></p>
-                    <% } %>
+        <% } else { %>
+            <div class="container">
+                <% pokemons.forEach(pokemon=> { %>
+                    <div class="card">
+                        <img src="<%= pokemon.image %>" alt="<%= pokemon.name %>">
+                        <p><strong>
+                                <%= pokemon.name %>
+                            </strong></p>
+                        <% if (pokemon.hp) { %>
+                            <p>HP: <%= pokemon.hp %>
+                            </p>
+                            <% } %>
+                    </div>
+                    <% }); %>
+            </div>
+            <% } %>
+
+                <div class="form-container">
+                    <div class="form-section">
+                        <h2>Criar Partida</h2>
+                        <form onsubmit="pegarSubmit(event)">
+                            <div class="form-group">
+                                <label for="nomePartida">Nome da Partida:</label>
+                                <input type="text" id="nomePartida" name="nomePartida" required>
+                            </div>
+                            <button type="submit">Criar</button>
+                        </form>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Entrar em Partida</h2>
+                        <form id="formaPartidas" onsubmit="entrarNaPartida(event)">
+                            <div class="form-group">
+                                <label>Escolha uma Partida:</label>
+                                <select id="listaPartidas" name="partidas" required>
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                            <button type="submit">Entrar</button>
+                        </form>
+                    </div>
                 </div>
-            <% }); %>
-        </div>
-    <% } %>
 
-    <div class="form-container">
-        <div class="form-section">
-            <h2>Criar Partida</h2>
-            <form action="/partidas/criar" method="POST">
-                <div class="form-group">
-                    <label for="nomePartida">Nome da Partida:</label>
-                    <input type="text" id="nomePartida" name="nomePartida" required>
-                </div>
-                <button type="submit">Criar</button>
-            </form>
-        </div>
+                <script defer>
+                    const logged = localStorage.getItem('user');
+                    if (!logged) {
+                        window.location.href = '/auth/register';
+                    }
 
-        <div class="form-section">
-            <h2>Entrar em Partida</h2>
-            <form action="" method="POST">
-                <div class="form-group">
-                    <label >Escolha uma Partida:</label>
-                    <select id="" name="" required>
-                      
-                            <option value="">MI BOMBOCLAT⚡</option>
+                    async function pegarSubmit(event) {
+                        event.preventDefault()
+                        const nome = document.getElementById("nomePartida").value
 
-                    </select>
-                </div>
-                <button type="submit">Entrar</button>
-            </form>
-        </div>
-    </div>
+                        if (await cadastrarPartida(nome)) {
+                            window.location.href = '/match';
+                        }
+                    }
 
-    <script>
-        const logged = localStorage.getItem('user');
-        if (!logged) {
-            window.location.href = '/auth/register';
-        }
-    </script>
+                    async function cadastrarPartida(nome) {
+                        const userData = JSON.parse(localStorage.getItem('user'))
+                        const username = userData.usuario;
+                        console.log(username)
+                        const response = await fetch("http://localhost:3000/match/new", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ username: username, name: nome })
+                        })
+
+                        if (response.ok) {
+                            return true
+                        } else {
+                            return false
+                        }
+
+                    }
+
+                    document.addEventListener('DOMContentLoaded', () => {
+                        carregarPartidas();
+                    });
+
+                    // LISTAGEM DAS PARTIDAS USANDO QUERY PARAMS
+                    async function carregarPartidas() {
+                        try {
+                            const response = await fetch('http://localhost:3000/match/listMatch?status=A');
+                            const result = await response.json();
+
+                            const select = document.getElementById('listaPartidas');
+                            select.innerHTML = ''; // limpa opções antigas
+
+                            if (result.data && result.data.length > 0) {
+                                result.data.forEach(p => {
+                                    const option = document.createElement('option');
+                                    option.value = p.nome;
+                                    option.textContent = p.nome;
+                                    select.appendChild(option);
+                                });
+                            } else {
+                                const option = document.createElement('option');
+                                option.textContent = 'Nenhuma partida disponível';
+                                option.disabled = true;
+                                select.appendChild(option);
+                            }
+                        } catch (error) {
+                            console.error("Erro ao carregar partidas:", error);
+                            const select = document.getElementById('listaPartidas');
+                            select.innerHTML = '<option disabled>Erro ao carregar partidas</option>';
+                        }
+                    }
+
+                    async function entrarNaPartida(event) {
+                        event.preventDefault();
+
+                        const partidaSelecionada = document.getElementById('listaPartidas').value;
+                        const user = JSON.parse(localStorage.getItem('user'));
+                        const username = user?.usuario;
+
+                        if (!partidaSelecionada || !username) {
+                            alert("Usuário ou partida não definidos!");
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch("http://localhost:3000/match/join", {
+                                method: 'POST',
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ 
+                                    username: username, 
+                                    name: partidaSelecionada 
+                                })
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                alert("Você entrou na partida!");
+                                window.location.href = '/match';
+                            } else {
+                                alert("Erro: " + result.message);
+                            }
+                        } catch (error) {
+                            console.error("Erro ao entrar na partida:", error);
+                            alert("Erro de conexão. Tente novamente.");
+                        }
+                    }
+                </script>
 </body>
+
 </html>
